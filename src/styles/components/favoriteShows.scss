@@ -1,0 +1,28 @@
+/* Favorites.css */
+
+.favorites-page {
+    background-color: #000; /* Fond noir */
+    color: #fff;
+    min-height: 100vh;
+    padding: 40px;
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+  
+  .favorites-page h1 {
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+  
+  .favorites-page p {
+    font-size: 16px;
+    color: #ccc;
+  }
+  
+  /* Grille des favoris */
+  .favorites-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }

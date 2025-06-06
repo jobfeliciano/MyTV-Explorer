@@ -1,0 +1,18 @@
+.logo {
+    top: 5px;
+    margin-bottom: 40px;
+    left: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+        width: 100px;
+        height: 60px;
+    }
+
+    h3 {
+        color: $color-2;
+        letter-spacing: 4px;
+    }
+}

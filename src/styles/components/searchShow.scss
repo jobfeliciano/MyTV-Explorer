@@ -1,0 +1,71 @@
+/* SearchShow.css */
+.search-show {
+  background-color: #000;  /* Fond noir */
+  color: #fff;             /* Texte blanc */
+  min-height: 90vh;
+  padding: 20px;
+}
+
+.search-input-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.search-input-container input {
+  width: 80%;
+  max-width: 500px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
+}
+
+.search-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+  justify-content: center;
+}
+
+.placeholder-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.placeholder-container h2 {
+  font-size: 18px;
+}
+
+/* Styles pour la pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #001f3f;  /* Bleu foncé */
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+.pagination button:disabled {
+  background-color: #444;
+  cursor: not-allowed;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #0c08d3;
+}
+
+.pagination span {
+  font-size: 16px;
+}

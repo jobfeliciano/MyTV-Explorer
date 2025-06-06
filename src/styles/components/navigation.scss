@@ -1,0 +1,85 @@
+/* Navigation.css */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+:root {
+    --primary-blue: #001f3f; /* Bleu foncé */
+    --accent-black: #000;    /* Noir */
+    --text-white: #fff;      /* Blanc */
+    --primary-red: #8b0909;
+  }
+  
+  .header {
+    width: 100%;
+    background-color: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .logo-container {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+  
+  /* Menu de navigation */
+  .nav-menu {
+    display: flex;
+    gap: 20px;
+  }
+  
+  /* Liens de navigation */
+  .nav-menu a {
+    color: var(--text-white);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+  
+    /* Icône et Texte  */
+    display: flex;
+    align-items: center;
+  
+    padding: 8px 12px;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Icônes dans le menu */
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+  }
+  
+  /* Survol et lien actif */
+  .nav-menu a:hover,
+  .nav-menu a.active {
+    background-color: var(--accent-black);
+    border-radius: 4px;
+  }
+
+ // Deconnexion
+.nav-name-logged {
+  display: flex;              
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 8px 12px;
+  background-color: var(--primary-red);             
+  color: var(--text-white);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 4px;         
+}
+
+.nav-name-logged:hover {
+  background-color: #430404;
+  color: var(--text-white);
+}

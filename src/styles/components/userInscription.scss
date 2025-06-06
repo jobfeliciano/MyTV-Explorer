@@ -1,0 +1,79 @@
+/* Inscription.css */
+
+.inscription-page {
+    background-color: #000;           /* Fond noir */
+    color: #fff;                      /* Texte en blanc */
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .inscription-page h1 {
+    margin-bottom: 10px;
+    font-size: 32px;
+  }
+  
+  .inscription-form {
+    background-color: #111;           
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .inscription-form label {
+    font-size: 16px;
+  }
+  
+  .inscription-form input {
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #222;
+    color: #fff;
+  }
+  
+  .inscription-form button {
+    padding: 12px;
+    font-size: 16px;
+    background-color: #0c08d3;      
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .inscription-form button:hover {
+    background-color: #020078;
+  }
+  
+  .message {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .login-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+  }
+  
+  .login-link a {
+    color: #0c08d3;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .login-link a:hover {
+    text-decoration: underline;
+  }
+  

@@ -1,0 +1,120 @@
+/* CategorieShow.css */
+.categorie-show {
+  background-color: #000; /* Fond noir */
+  color: #fff;
+  min-height: 90vh;
+  padding: 20px;
+}
+
+.categorie-show h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 28px;
+}
+
+.genre-list {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px 0;
+  margin-bottom: 20px;
+}
+
+.genre-chip {
+  flex: 0 0 auto;
+  background-color: #001f3f; /* Bleu foncé */
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.genre-chip:hover {
+  background-color: #0c08d3;
+}
+
+.genre-chip.active {
+  background-color: #ffcc00; /* Accent pour la sélection */
+  color: #000;
+}
+
+.shows-container {
+  margin-top: 20px;
+}
+
+.loading {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 40px;
+}
+
+.shows-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+  justify-content: center;
+}
+
+.placeholder {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 40px;
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  background-color: #001f3f; /* Bleu foncé */
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:disabled {
+  background-color: #444;
+  cursor: not-allowed;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #0c08d3;
+}
+
+.pagination span {
+  font-size: 16px;
+}
+
+@media (max-width: 400px) {
+  .categorie-show {
+    padding: 10px;
+  }
+
+  .categorie-show h1 {
+    font-size: 1.5rem;
+  }
+
+  .genre-chip {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .pagination button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .pagination span {
+    font-size: 0.8rem;
+  }
+}
