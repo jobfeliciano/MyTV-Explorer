@@ -19,7 +19,7 @@ const FavoriteShows = () => {
     if (!userId) return;
 
     axios
-      .get(`http://localhost:3005/users/${userId}`)
+      .get(`https://mytv-jsonserver-production.up.railway.app/users/${userId}`)
       .then((res) => {
         setCurrentUser(res.data);
         localStorage.setItem("user", JSON.stringify(res.data));

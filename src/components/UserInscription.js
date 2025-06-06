@@ -24,7 +24,7 @@ const UserInscription = () => {
     }
     // Envoi des données à la base de données locale
     axios
-      .post("http://localhost:3005/users", {
+      .post("https://mytv-jsonserver-production.up.railway.app/users", {
         username: form.username,
         email: form.email,
         password: form.password,

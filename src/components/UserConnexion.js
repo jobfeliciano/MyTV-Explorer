@@ -17,7 +17,7 @@ const UserConnexion = () => {
     e.preventDefault();
     try {
       // Recherche d'un utilisateur par email
-      const response = await axios.get(`http://localhost:3005/users?email=${form.email}`);
+      const response = await axios.get(`https://mytv-jsonserver-production.up.railway.app/users?email=${form.email}`);
       if (response.data.length > 0) {
         // L'utilisateur existe
         const user = response.data[0];
