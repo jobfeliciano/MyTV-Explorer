@@ -1,58 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { Circles } from 'react-loading-icons';
 import Actor from '../components/Actor';
 import Navigation from '../components/Navigation';
-import { Circles } from 'react-loading-icons';
 import { useHistory } from 'react-router-dom';
 
 const ShowDetails = (props) => {
   const history = useHistory();
   const id = props.location.state.id; // ID de la série
 
+  // États pour les données principales
   const [details, setDetails] = useState({});
   const [credits, setCredits] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [seasonDetails, setSeasonDetails] = useState({});
-  const [loading, setLoading] = useState(false); // État de chargement
-  const [heartState, setHeartState] = useState("none");
-  const [user, setUser] = useState(null);
-  const isAuthenticated = localStorage.getItem("user") ? true : false;
 
-  const [trailerUrl, setTrailerUrl] = useState("");
+  // États pour la logique de favori
+  const [heartState, setHeartState] = useState('none');
+  const [user, setUser] = useState(null);
+  const isAuthenticated = !!localStorage.getItem('user');
+
+  // États pour la bande annonce
+  const [trailerUrl, setTrailerUrl] = useState('');
   const [showTrailerModal, setShowTrailerModal] = useState(false);
 
-  // Récupération des détails de la série et des crédits
+  // Nouvel état pour indiquer le chargement des données principales
+  const [loadingMain, setLoadingMain] = useState(true);
+
+  // 1) Chargement simultané des détails de la série + crédits
   useEffect(() => {
-    setLoading(true);
+    setLoadingMain(true);
+    const fetchDetailsAndCredits = async () => {
+      try {
+        const [detailsRes, creditsRes] = await Promise.all([
+          axios.get(
+            `https://api.themoviedb.org/3/tv/${id}?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`
+          ),
+          axios.get(
+            `https://api.themoviedb.org/3/tv/${id}/credits?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`
+          )
+        ]);
 
-    const detailsRequest = axios.get(
-      `https://api.themoviedb.org/3/tv/${id}?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`
-    );
-    const creditsRequest = axios.get(
-      `https://api.themoviedb.org/3/tv/${id}/credits?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`
-    );
-
-    Promise.all([detailsRequest, creditsRequest])
-      .then(([resDetails, resCredits]) => {
-        const data = resDetails.data;
-        setDetails(data);
-        if (data.seasons && data.seasons.length > 0) {
-          const validSeasons = data.seasons.filter((s) => s.season_number > 0);
+        // Détails
+        const serieData = detailsRes.data;
+        setDetails(serieData);
+        if (serieData.seasons && serieData.seasons.length > 0) {
+          const validSeasons = serieData.seasons.filter(s => s.season_number > 0);
           if (validSeasons.length > 0) {
             setSelectedSeason(validSeasons[0].season_number);
           }
         }
 
-        const sortedCast = resCredits.data.cast
+        // Crédits (tri + slice)
+        const sortedCast = creditsRes.data.cast
           .sort((a, b) => a.order - b.order)
           .slice(0, 8);
         setCredits(sortedCast);
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoadingMain(false);
+      }
+    };
+
+    fetchDetailsAndCredits();
   }, [id]);
 
-  // Récupération des détails de la saison sélectionnée
+  // 2) Chargement des épisodes de la saison sélectionnée
   useEffect(() => {
     if (selectedSeason) {
       axios
@@ -64,20 +79,16 @@ const ShowDetails = (props) => {
     }
   }, [id, selectedSeason]);
 
-  // Vérification et chargement de l'utilisateur connecté
+  // 3) Vérification et chargement de l'utilisateur connecté + état du cœur
   useEffect(() => {
     if (isAuthenticated) {
-      const storedUser = JSON.parse(localStorage.getItem("user"));
+      const storedUser = JSON.parse(localStorage.getItem('user'));
       setUser(storedUser);
       axios
         .get(`http://localhost:3005/users/${storedUser.id}`)
         .then((res) => {
           const favorites = res.data.favorites || [];
-          if (favorites.includes(details.id)) {
-            setHeartState("full");
-          } else {
-            setHeartState("empty");
-          }
+          setHeartState(favorites.includes(details.id) ? 'full' : 'empty');
         })
         .catch((err) => console.error(err));
     }
@@ -91,33 +102,33 @@ const ShowDetails = (props) => {
     history.push('/actorDetails', { id: actorId });
   };
 
-  // Gestion du favori
+  // Gestion du favori dans ShowDetails
   const handleFavoriteClick = async (e) => {
     e.stopPropagation();
     if (!user) return;
-    if (heartState === "empty" || heartState === "broken") {
+    if (heartState === 'empty' || heartState === 'broken') {
       try {
         const userRes = await axios.get(`http://localhost:3005/users/${user.id}`);
         const currentFavorites = userRes.data.favorites || [];
         const updatedFavorites = [...currentFavorites, details.id];
         await axios.patch(`http://localhost:3005/users/${user.id}`, {
-          favorites: updatedFavorites,
+          favorites: updatedFavorites
         });
-        setHeartState("full");
+        setHeartState('full');
       } catch (error) {
-        console.error("Erreur lors de l'ajout aux favoris :", error);
+        console.error('Erreur lors de l\'ajout aux favoris :', error);
       }
-    } else if (heartState === "full") {
+    } else if (heartState === 'full') {
       try {
         const userRes = await axios.get(`http://localhost:3005/users/${user.id}`);
         const currentFavorites = userRes.data.favorites || [];
         const updatedFavorites = currentFavorites.filter((favId) => favId !== details.id);
         await axios.patch(`http://localhost:3005/users/${user.id}`, {
-          favorites: updatedFavorites,
+          favorites: updatedFavorites
         });
-        setHeartState("broken");
+        setHeartState('broken');
       } catch (error) {
-        console.error("Erreur lors de la suppression des favoris :", error);
+        console.error('Erreur lors de la suppression des favoris :', error);
       }
     }
   };
@@ -129,83 +140,78 @@ const ShowDetails = (props) => {
         `https://api.themoviedb.org/3/tv/${id}/videos?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`
       );
       const videos = response.data.results;
-      const trailer = videos.find((video) => video.type === "Trailer" && video.site === "YouTube");
+      const trailer = videos.find((video) => video.type === 'Trailer' && video.site === 'YouTube');
       if (trailer) {
         setTrailerUrl(`https://www.youtube.com/embed/${trailer.key}`);
         setShowTrailerModal(true);
       } else {
-        alert("Bande annonce non disponible.");
+        alert('Bande annonce non disponible.');
       }
     } catch (error) {
-      console.error("Erreur lors du chargement de la bande annonce :", error);
+      console.error('Erreur lors du chargement de la bande annonce :', error);
     }
   };
 
   const closeTrailerModal = () => {
     setShowTrailerModal(false);
-    setTrailerUrl("");
+    setTrailerUrl('');
   };
-
-  // Affichage conditionnel pendant le chargement
-  if (loading) {
-    return (
-      <div className="show-details-loading">
-        <Navigation />
-        <div className="loading">
-          <Circles stroke="#98ff98" strokeOpacity={0.125} speed={0.75} />
-        </div>
-      </div>
-    );
-  }
 
   // Formatage pour l'année
   const year = details.first_air_date ? new Date(details.first_air_date).getFullYear() : '';
 
-  // Genres cliquables
+  // Genres en liens cliquables (Link de react-router)
   const renderGenres = () => {
-    if (!details.genres || details.genres.length === 0) return "";
+    if (!details.genres || details.genres.length === 0) return null;
     return details.genres.map((g, idx) => (
       <span key={g.id}>
-        <a
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            history.push("/categories", { id: g.id, name: g.name });
+        <Link
+          to={{
+            pathname: '/categories',
+            state: { id: g.id, name: g.name }
           }}
           className="genre-link"
         >
           {g.name}
-        </a>
-        {idx < details.genres.length - 1 ? ", " : ""}
+        </Link>
+        {idx < details.genres.length - 1 ? ', ' : ''}
       </span>
     ));
   };
 
-  // Image de fond
-  const backgroundImage = details.backdrop_path
-    ? `https://image.tmdb.org/t/p/original${details.backdrop_path}`
-    : details.poster_path
-    ? `https://image.tmdb.org/t/p/original${details.poster_path}`
-    : '/noimg.jpg';
+  // Choix de l'icône cœur
+  let heartIconSrc = '';
+  if (heartState === 'empty') heartIconSrc = '/icons/heart-empty.png';
+  else if (heartState === 'full') heartIconSrc = '/icons/heart-full.png';
+  else if (heartState === 'broken') heartIconSrc = '/icons/heart-broken.png';
 
-  const averageRunTime = details.episode_run_time ? details.episode_run_time[0] : 0;
-
-  // Choix de l'icône favori
-  let heartIconSrc = "";
-  if (heartState === "empty") {
-    heartIconSrc = "/icons/heart-empty.png";
-  } else if (heartState === "full") {
-    heartIconSrc = "/icons/heart-full.png";
-  } else if (heartState === "broken") {
-    heartIconSrc = "/icons/heart-broken.png";
+  // Si on est en train de charger les données principales, on affiche le loader
+  if (loadingMain) {
+    return (
+      <div className="loading-main-container" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Circles stroke="#98ff98" strokeOpacity={0.125} speed={0.75} />
+      </div>
+    );
   }
 
+  // Une fois chargé, on affiche la page complète
   return (
     <div>
       <Navigation />
       <div className="show-details">
         {/* Section Hero */}
-        <div className="hero-section" style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <div
+          className="hero-section"
+          style={{
+            backgroundImage: `url(${
+              details.backdrop_path
+                ? `https://image.tmdb.org/t/p/original${details.backdrop_path}`
+                : details.poster_path
+                ? `https://image.tmdb.org/t/p/original${details.poster_path}`
+                : '/noimg.jpg'
+            })`
+          }}
+        >
           <div className="hero-overlay">
             <div className="hero-content">
               <div className="poster-container">
@@ -223,10 +229,13 @@ const ShowDetails = (props) => {
                 <h1>{details.name}</h1>
                 <p className="sub-info">
                   {year} • {renderGenres()}
-                  {averageRunTime ? ` • ${averageRunTime} min` : ''}
+                  {details.episode_run_time && details.episode_run_time.length > 0
+                    ? ` • ${details.episode_run_time[0]} min`
+                    : ''}
                 </p>
                 <p className="overview">{details.overview}</p>
-                {/* Conteneur des actions */}
+
+                {/* Conteneur des actions (Bande Annonce + Favoris) */}
                 <div className="actions-container">
                   <button className="trailer-btn" onClick={handleTrailerClick}>
                     Bande Annonce
@@ -248,7 +257,7 @@ const ShowDetails = (props) => {
         {/* Section Saison */}
         <div className="season-section">
           <h2>
-            {details.name} – Saison {selectedSeason}{' '}
+            {details.name} - Saison {selectedSeason}{' '}
             {seasonDetails.episodes && seasonDetails.episodes.length > 0 ? (
               <span>({seasonDetails.episodes.length} épisodes)</span>
             ) : null}
@@ -276,9 +285,12 @@ const ShowDetails = (props) => {
         <div className="actors-section comms-bg">
           <h2>Acteurs Principaux</h2>
           <ul className="actors-list">
-            {credits.map((actor) => (
-              <li key={actor.id}>
-                <Actor actor={actor} onClick={() => handleActorClick(actor.id)} />
+            {credits.map((actorItem) => (
+              <li key={actorItem.id}>
+                <Actor
+                  actor={actorItem}
+                  onClick={() => handleActorClick(actorItem.id)}
+                />
               </li>
             ))}
           </ul>
@@ -302,10 +314,11 @@ const ShowDetails = (props) => {
                   )}
                   <div className="episode-info">
                     <h3>
-                      S{seasonDetails.season_number} E{ep.episode_number} – {ep.name}
+                      S{seasonDetails.season_number} E{ep.episode_number} - {ep.name}
                     </h3>
                     <p className="episode-meta">
-                      {ep.air_date} • {ep.runtime ? `${ep.runtime} min` : '...'}
+                      {ep.air_date} •{' '}
+                      {ep.runtime ? `${ep.runtime} min` : '...'}
                     </p>
                     <p className="episode-overview">{ep.overview}</p>
                   </div>
@@ -318,10 +331,13 @@ const ShowDetails = (props) => {
         </div>
       </div>
 
-      {/* Modal Bande Annonce */}
+      {/* Modal pour Bande Annonce */}
       {showTrailerModal && (
         <div className="trailer-modal" onClick={closeTrailerModal}>
-          <div className="trailer-modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="trailer-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
             <span className="close-modal" onClick={closeTrailerModal}>
               &times;
             </span>
