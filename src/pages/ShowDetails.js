@@ -2,56 +2,63 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Actor from '../components/Actor';
 import Navigation from '../components/Navigation';
+import { Circles } from 'react-loading-icons';
 import { useHistory } from 'react-router-dom';
 
 const ShowDetails = (props) => {
   const history = useHistory();
   const id = props.location.state.id; // ID de la série
+
   const [details, setDetails] = useState({});
   const [credits, setCredits] = useState([]);
   const [selectedSeason, setSelectedSeason] = useState(null);
   const [seasonDetails, setSeasonDetails] = useState({});
-  
-  // Pour gérer l'état des favoris
+  const [loading, setLoading] = useState(false); // État de chargement
   const [heartState, setHeartState] = useState("none");
   const [user, setUser] = useState(null);
   const isAuthenticated = localStorage.getItem("user") ? true : false;
-  
-  // Pour la gestion de la bande annonce
+
   const [trailerUrl, setTrailerUrl] = useState("");
   const [showTrailerModal, setShowTrailerModal] = useState(false);
 
   // Récupération des détails de la série et des crédits
   useEffect(() => {
-    axios
-      .get(`https://api.themoviedb.org/3/tv/${id}?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`)
-      .then((res) => {
-        setDetails(res.data);
-        if (res.data.seasons && res.data.seasons.length > 0) {
-          const validSeasons = res.data.seasons.filter(s => s.season_number > 0);
+    setLoading(true);
+
+    const detailsRequest = axios.get(
+      `https://api.themoviedb.org/3/tv/${id}?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`
+    );
+    const creditsRequest = axios.get(
+      `https://api.themoviedb.org/3/tv/${id}/credits?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`
+    );
+
+    Promise.all([detailsRequest, creditsRequest])
+      .then(([resDetails, resCredits]) => {
+        const data = resDetails.data;
+        setDetails(data);
+        if (data.seasons && data.seasons.length > 0) {
+          const validSeasons = data.seasons.filter((s) => s.season_number > 0);
           if (validSeasons.length > 0) {
             setSelectedSeason(validSeasons[0].season_number);
           }
         }
-      })
-      .catch((err) => console.error(err));
 
-    axios
-      .get(`https://api.themoviedb.org/3/tv/${id}/credits?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`)
-      .then((res) => {
-        const sortedCast = res.data.cast
+        const sortedCast = resCredits.data.cast
           .sort((a, b) => a.order - b.order)
           .slice(0, 8);
         setCredits(sortedCast);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
   }, [id]);
 
   // Récupération des détails de la saison sélectionnée
   useEffect(() => {
     if (selectedSeason) {
       axios
-        .get(`https://api.themoviedb.org/3/tv/${id}/season/${selectedSeason}?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`)
+        .get(
+          `https://api.themoviedb.org/3/tv/${id}/season/${selectedSeason}?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`
+        )
         .then((res) => setSeasonDetails(res.data))
         .catch((err) => console.error(err));
     }
@@ -62,8 +69,9 @@ const ShowDetails = (props) => {
     if (isAuthenticated) {
       const storedUser = JSON.parse(localStorage.getItem("user"));
       setUser(storedUser);
-      axios.get(`http://localhost:3005/users/${storedUser.id}`)
-        .then(res => {
+      axios
+        .get(`http://localhost:3005/users/${storedUser.id}`)
+        .then((res) => {
           const favorites = res.data.favorites || [];
           if (favorites.includes(details.id)) {
             setHeartState("full");
@@ -71,7 +79,7 @@ const ShowDetails = (props) => {
             setHeartState("empty");
           }
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     }
   }, [isAuthenticated, details.id]);
 
@@ -83,7 +91,7 @@ const ShowDetails = (props) => {
     history.push('/actorDetails', { id: actorId });
   };
 
-  // Gestion du favori dans ShowDetails
+  // Gestion du favori
   const handleFavoriteClick = async (e) => {
     e.stopPropagation();
     if (!user) return;
@@ -92,7 +100,9 @@ const ShowDetails = (props) => {
         const userRes = await axios.get(`http://localhost:3005/users/${user.id}`);
         const currentFavorites = userRes.data.favorites || [];
         const updatedFavorites = [...currentFavorites, details.id];
-        await axios.patch(`http://localhost:3005/users/${user.id}`, { favorites: updatedFavorites });
+        await axios.patch(`http://localhost:3005/users/${user.id}`, {
+          favorites: updatedFavorites,
+        });
         setHeartState("full");
       } catch (error) {
         console.error("Erreur lors de l'ajout aux favoris :", error);
@@ -101,8 +111,10 @@ const ShowDetails = (props) => {
       try {
         const userRes = await axios.get(`http://localhost:3005/users/${user.id}`);
         const currentFavorites = userRes.data.favorites || [];
-        const updatedFavorites = currentFavorites.filter(favId => favId !== details.id);
-        await axios.patch(`http://localhost:3005/users/${user.id}`, { favorites: updatedFavorites });
+        const updatedFavorites = currentFavorites.filter((favId) => favId !== details.id);
+        await axios.patch(`http://localhost:3005/users/${user.id}`, {
+          favorites: updatedFavorites,
+        });
         setHeartState("broken");
       } catch (error) {
         console.error("Erreur lors de la suppression des favoris :", error);
@@ -110,18 +122,16 @@ const ShowDetails = (props) => {
     }
   };
 
-  // Fonction pour charger la bande annonce
+  // Chargement de la bande annonce
   const handleTrailerClick = async () => {
     try {
       const response = await axios.get(
         `https://api.themoviedb.org/3/tv/${id}/videos?api_key=a67b57849deb687f2cd49d7a8298b366&language=en-US`
       );
       const videos = response.data.results;
-      // Recherche d'une vidéo de type "Trailer" 
-      const trailer = videos.find(video => video.type === "Trailer" && video.site === "YouTube");
+      const trailer = videos.find((video) => video.type === "Trailer" && video.site === "YouTube");
       if (trailer) {
-        const embedUrl = `https://www.youtube.com/embed/${trailer.key}`;
-        setTrailerUrl(embedUrl);
+        setTrailerUrl(`https://www.youtube.com/embed/${trailer.key}`);
         setShowTrailerModal(true);
       } else {
         alert("Bande annonce non disponible.");
@@ -131,18 +141,27 @@ const ShowDetails = (props) => {
     }
   };
 
-  // Fonction pour fermer la modal
   const closeTrailerModal = () => {
     setShowTrailerModal(false);
     setTrailerUrl("");
   };
 
-  // Formatage pour l'année
-  const year = details.first_air_date
-    ? new Date(details.first_air_date).getFullYear()
-    : '';
+  // Affichage conditionnel pendant le chargement
+  if (loading) {
+    return (
+      <div className="show-details-loading">
+        <Navigation />
+        <div className="loading">
+          <Circles stroke="#98ff98" strokeOpacity={0.125} speed={0.75} />
+        </div>
+      </div>
+    );
+  }
 
-  // Genres en liens cliquables
+  // Formatage pour l'année
+  const year = details.first_air_date ? new Date(details.first_air_date).getFullYear() : '';
+
+  // Genres cliquables
   const renderGenres = () => {
     if (!details.genres || details.genres.length === 0) return "";
     return details.genres.map((g, idx) => (
@@ -169,11 +188,9 @@ const ShowDetails = (props) => {
     ? `https://image.tmdb.org/t/p/original${details.poster_path}`
     : '/noimg.jpg';
 
-  const averageRunTime = details.episode_run_time
-    ? details.episode_run_time[0]
-    : 0;
+  const averageRunTime = details.episode_run_time ? details.episode_run_time[0] : 0;
 
-  // Détermine l'icône du favori
+  // Choix de l'icône favori
   let heartIconSrc = "";
   if (heartState === "empty") {
     heartIconSrc = "/icons/heart-empty.png";
@@ -188,10 +205,7 @@ const ShowDetails = (props) => {
       <Navigation />
       <div className="show-details">
         {/* Section Hero */}
-        <div
-          className="hero-section"
-          style={{ backgroundImage: `url(${backgroundImage})` }}
-        >
+        <div className="hero-section" style={{ backgroundImage: `url(${backgroundImage})` }}>
           <div className="hero-overlay">
             <div className="hero-content">
               <div className="poster-container">
@@ -234,7 +248,7 @@ const ShowDetails = (props) => {
         {/* Section Saison */}
         <div className="season-section">
           <h2>
-            {details.name} - Saison {selectedSeason}{' '}
+            {details.name} – Saison {selectedSeason}{' '}
             {seasonDetails.episodes && seasonDetails.episodes.length > 0 ? (
               <span>({seasonDetails.episodes.length} épisodes)</span>
             ) : null}
@@ -248,8 +262,8 @@ const ShowDetails = (props) => {
             >
               {details.seasons &&
                 details.seasons
-                  .filter(season => season.season_number > 0)
-                  .map(season => (
+                  .filter((season) => season.season_number > 0)
+                  .map((season) => (
                     <option key={season.id} value={season.season_number}>
                       Saison {season.season_number} ({season.episode_count} épisodes)
                     </option>
@@ -275,7 +289,7 @@ const ShowDetails = (props) => {
           <h2>Liste des Épisodes</h2>
           {seasonDetails.episodes && seasonDetails.episodes.length > 0 ? (
             <div className="episodes-list">
-              {seasonDetails.episodes.map(ep => (
+              {seasonDetails.episodes.map((ep) => (
                 <div key={ep.id} className="episode-item">
                   {ep.still_path ? (
                     <img
@@ -288,7 +302,7 @@ const ShowDetails = (props) => {
                   )}
                   <div className="episode-info">
                     <h3>
-                      S{seasonDetails.season_number} E{ep.episode_number} - {ep.name}
+                      S{seasonDetails.season_number} E{ep.episode_number} – {ep.name}
                     </h3>
                     <p className="episode-meta">
                       {ep.air_date} • {ep.runtime ? `${ep.runtime} min` : '...'}
@@ -304,11 +318,13 @@ const ShowDetails = (props) => {
         </div>
       </div>
 
-      {/* Modal pour Bande Annonce */}
+      {/* Modal Bande Annonce */}
       {showTrailerModal && (
         <div className="trailer-modal" onClick={closeTrailerModal}>
           <div className="trailer-modal-content" onClick={(e) => e.stopPropagation()}>
-            <span className="close-modal" onClick={closeTrailerModal}>&times;</span>
+            <span className="close-modal" onClick={closeTrailerModal}>
+              &times;
+            </span>
             {trailerUrl ? (
               <iframe
                 width="100%"
