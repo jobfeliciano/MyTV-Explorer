@@ -46,13 +46,13 @@ const PopularShows = () => {
         <button onClick={() => setPage(1)} disabled={page === 1}>
           Première page
         </button>
-        <button onClick={() => setPage(page - 1)} disabled={page === 1}>
+        <button className="prev-btn" onClick={() => setPage(page - 1)} disabled={page === 1}>
           Précédent
         </button>
         <span>
           Page {page}
         </span>
-        <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>
+        <button className="next-btn" onClick={() => setPage(page + 1)} disabled={page === totalPages}>
           Suivant
         </button>
         <button onClick={() => setPage(totalPages)} disabled={page === totalPages}>

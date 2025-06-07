@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "./Logo";
 
@@ -6,7 +6,7 @@ const Navigation = () => {
     // Vérifie la présence d'un utilisateur connecté dans le localStorage
     const isAuthenticated = localStorage.getItem("user") ? true : false;
 
-    // Fonction de déconnexion qui supprime le user et redirige vers l'accueil
+    // Fonction de déconnexion
     const handleLogout = () => {
         if (window.confirm("Êtes-vous certain de vouloir vous déconnecter?")) {
             localStorage.removeItem("user");
@@ -14,35 +14,61 @@ const Navigation = () => {
         }
     };
 
+    // Gestion du menu-toggle pour le responsive
+    useEffect(() => {
+        const menuToggle = document.getElementById("menu-toggle");
+        const navMenu = document.getElementById("nav-menu");
+
+        const toggleMenu = () => {
+            navMenu.classList.toggle("active");
+        };
+
+        if (menuToggle) {
+            menuToggle.addEventListener("click", toggleMenu);
+        }
+
+        return () => {
+            if (menuToggle) {
+                menuToggle.removeEventListener("click", toggleMenu);
+            }
+        };
+    }, []);
+
     return (
         <header className="header" id="header">
             <div className="logo-container">
-                <Logo />   
-            </div>    
+                <Logo />
+            </div>
+
+            {/* Menu toggle button pour mobile */}
+            <div className="menu-toggle" id="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
             <nav className="nav-menu" id="nav-menu">
-                <NavLink exact to="/" activeClassName="active">
+                <NavLink exact="true" to="/" className={({ isActive }) => isActive ? "active" : ""}>
                     Séries Populaires
                 </NavLink>
-                <NavLink to="/categories" activeClassName="active">
+                <NavLink to="/categories" className={({ isActive }) => isActive ? "active" : ""}>
                     Catégories
                 </NavLink>
-                <NavLink to="/search" activeClassName="active">
+                <NavLink to="/search" className={({ isActive }) => isActive ? "active" : ""}>
                     <img src="/icons/search.png" alt="Recherche" className="nav-icon" />
                     Recherche
                 </NavLink>
-                <NavLink to={isAuthenticated ? "/favorites" : "/login"} activeClassName={isAuthenticated ? "active" : "desactive"}>
+                <NavLink to={isAuthenticated ? "/favorites" : "/login"} className={({ isActive }) => isActive ? "active" : "desactive"}>
                     <img src="/icons/favoris.png" alt="Favoris" className="nav-icon" />
                     Favoris
                 </NavLink>
                 {isAuthenticated ? (
-                    // Si l'utilisateur est connecté, affiche Déconnexion
                     <span className="nav-name nav-name-logged" onClick={handleLogout}>
                         <img src="/icons/user2.png" alt="Déconnexion" className="nav-icon" />
                         Déconnexion
                     </span>
                 ) : (
-                    // Sinon, affiche le lien Connexion
-                    <NavLink to="/login" activeClassName="active" className="nav-name nav-name-unlogged">
+                    <NavLink to="/login" className={({ isActive }) => isActive ? "active" : "nav-name nav-name-unlogged"}>
                         <img src="/icons/user.png" alt="Connexion" className="nav-icon" />
                         Connexion
                     </NavLink>

@@ -76,4 +76,38 @@
   .login-link a:hover {
     text-decoration: underline;
   }
+
+  @media (max-width: 480px) {
+  .inscription-page {
+    padding: 10px; /* Réduit un peu le padding général */
+  }
+
+  .inscription-page h1 {
+    font-size: 26px; /* Titre un peu plus petit sur mobile */
+  }
+
+  .inscription-form {
+    padding: 15px;   /* Moins de padding dans le formulaire */
+    gap: 10px;       /* Moins de gap entre les champs */
+  }
+
+  .inscription-form input {
+    padding: 8px;    /* Champs plus petits */
+    font-size: 14px;
+  }
+
+  .inscription-form button {
+    padding: 10px;   /* Bouton plus adapté mobile */
+    font-size: 15px;
+  }
+
+  .message {
+    font-size: 14px; /* Message plus petit */
+  }
+
+  .login-link {
+    font-size: 13px; /* Lien plus petit */
+  }
+}
+
   

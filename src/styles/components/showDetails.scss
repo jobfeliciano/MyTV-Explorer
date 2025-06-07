@@ -299,3 +299,53 @@
 .close-modal:hover {
   color: #0400ff;
 }
+
+/* Responsive supplémentaire pour mobile */
+@media (max-width: 480px) {
+  /* Hero Section */
+  .hero-section {
+    min-height: 250px;
+    padding: 10px;
+  }
+  
+  .poster {
+    width: 140px;
+  }
+
+  .info-container h1 {
+    font-size: 24px;
+  }
+
+  .sub-info, .overview {
+    font-size: 14px;
+  }
+
+  /* Actors list */
+  .actors-list {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .actors-list li {
+    flex: 0 1 45%; /* 2 colonnes sur mobile */
+    max-width: 45%;
+  }
+
+  /* Episodes list */
+  .episodes-list {
+    gap: 10px;
+  }
+
+  .episode-item {
+    width: 100%; /* Full width on mobile */
+  }
+
+  .episode-info h3 {
+    font-size: 16px;
+  }
+
+  .episode-meta,
+  .episode-overview {
+    font-size: 13px;
+  }
+}

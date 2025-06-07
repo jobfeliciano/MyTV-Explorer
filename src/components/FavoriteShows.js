@@ -88,13 +88,13 @@ const FavoriteShows = () => {
             ))}
           </div>
           <div className="pagination">
-            <button onClick={handlePrevPage} disabled={currentPage === 1}>
+            <button className="prev-btn" onClick={handlePrevPage} disabled={currentPage === 1}>
               Précédent
             </button>
             <span>
               Page {currentPage} sur {totalPages}
             </span>
-            <button
+            <button className="next-btn"
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
             >

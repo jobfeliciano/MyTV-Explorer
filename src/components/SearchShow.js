@@ -61,13 +61,13 @@ const SearchShow = () => {
             </div>
             {totalPages > 1 && (
               <div className="pagination">
-                <button onClick={handlePrev} disabled={currentPage === 1}>
+                <button className="prev-btn" onClick={handlePrev} disabled={currentPage === 1}>
                   Précédent
                 </button>
                 <span>
                   Page {currentPage} sur {totalPages}
                 </span>
-                <button onClick={handleNext} disabled={currentPage === totalPages}>
+                <button className="next-btn" onClick={handleNext} disabled={currentPage === totalPages}>
                   Suivant
                 </button>
               </div>

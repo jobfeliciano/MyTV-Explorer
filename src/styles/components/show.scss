@@ -6,6 +6,7 @@
   position: relative;
   cursor: pointer;
   transition: transform 0.3s ease;
+  overflow: hidden; /* pour bien gérer le mask */
 }
 
 .show:hover {
@@ -37,9 +38,10 @@
 
 .show-poster {
   width: 100%;
-  border-radius: 10%;
-  height: 300px; 
+  height: auto;
+  aspect-ratio: 2/3; /* ratio standard des affiches */
   object-fit: cover;
+  border-radius: 10%;
   display: block;
 }
 
@@ -68,7 +70,7 @@
 .show-info {
   text-align: center;
   padding: 5px 0;
-  border-radius: 40%;
+  border-radius: 10%; /* par défaut */
   background-color: #000000;
 }
 
@@ -82,7 +84,7 @@
   position: absolute;
   bottom: 5px;
   right: 5px;
-  width: 40px; 
+  width: 40px;
   height: 40px;
   cursor: pointer;
   z-index: 3;
@@ -93,21 +95,30 @@
   transform: scale(1.2);
 }
 
+/* Responsive */
 @media (max-width: 1024px) {
   .show {
-    width: 180px;
+    width: 60px;
   }
 }
 
 @media (max-width: 768px) {
   .show {
-    width: 150px;
+    width: 50px;
   }
 }
 
-@media (max-width: 480px) {
-  .show {
-    width: 100%;
+@media (max-width: 600px) {
+.show {
+    width: 40%;
     max-width: 300px;
+  }
+  .show-poster {
+    border-radius: 10px; /* éviter le 10% trop grand sur mobile */
+  }
+
+  .show-info {
+    border-radius: 0; /* rendre plat en mobile */
+    padding: 8px 0;
   }
 }

@@ -91,11 +91,11 @@ const CategoriesShows = () => {
                 <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
                   Première page
                 </button>
-                <button onClick={handlePrevPage} disabled={currentPage === 1}>
+                <button className="prev-btn" onClick={handlePrevPage} disabled={currentPage === 1}>
                   Précédent
                 </button>
                 <span>Page {currentPage}</span>
-                <button onClick={handleNextPage} /* À désactiver selon la réponse API si nécessaire */>
+                <button className="next-btn" onClick={handleNextPage} /* À désactiver selon la réponse API si nécessaire */>
                   Suivant
                 </button>
               </div>

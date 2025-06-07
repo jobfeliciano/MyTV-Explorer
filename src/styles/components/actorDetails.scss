@@ -87,3 +87,64 @@
         color: #0400ff;
     }
   }
+
+  @media only screen and (max-width: 768px) {
+
+  .actor-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .actor-profile {
+    width: 180px;
+  }
+
+  .actor-info h1 {
+    font-size: 24px;
+  }
+
+  .actor-info p {
+    font-size: 14px;
+  }
+
+  .biography {
+    font-size: 13px;
+    padding: 0 10px;
+  }
+
+  .actor-tv-credits h2 {
+    font-size: 22px;
+  }
+
+  .tv-credit-item {
+    width: 120px;
+  }
+
+  .tv-credit-item p {
+    font-size: 12px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+
+  .actor-profile {
+    width: 140px;
+  }
+
+  .actor-info h1 {
+    font-size: 20px;
+  }
+
+  .actor-info p {
+    font-size: 12px;
+  }
+
+  .tv-credit-item {
+    width: 100px;
+  }
+
+  .tv-credit-item p {
+    font-size: 11px;
+  }
+}

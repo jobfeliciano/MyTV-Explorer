@@ -83,3 +83,43 @@ html, body {
   background-color: #430404;
   color: var(--text-white);
 }
+
+/* Responsive NavBar */
+
+/* Cacher le menu et afficher un bouton burger sur mobile */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.menu-toggle span {
+  display: block;
+  height: 3px;
+  background-color: var(--text-white);
+  border-radius: 2px;
+}
+
+@media only screen and (max-width: 768px) {
+  .nav-menu {
+    display: none; /* cacher menu en mobile */
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--primary-blue);
+    position: absolute;
+    top: 60px; /* hauteur du header */
+    left: 0;
+    padding: 10px 0;
+  }
+
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: flex; /* afficher le burger */
+  }
+}

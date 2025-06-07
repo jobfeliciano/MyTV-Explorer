@@ -80,3 +80,35 @@
     text-decoration: underline;
   }
   
+  @media (max-width: 480px) {
+  .connexion-page {
+    padding: 10px; /* Un peu moins de padding global */
+  }
+
+  .connexion-form {
+    padding: 15px; /* Moins de padding dans la box */
+    gap: 10px;     /* Moins d'espace entre les éléments */
+  }
+
+  .connexion-form input {
+    padding: 8px;   /* Champs un peu plus petits */
+    font-size: 14px;
+  }
+
+  .connexion-form button {
+    padding: 10px;  /* Un bouton plus fluide sur mobile */
+    font-size: 15px;
+  }
+
+  .connexion-page h1 {
+    font-size: 26px; /* Un titre un peu plus petit sur mobile */
+  }
+
+  .message {
+    font-size: 14px;
+  }
+
+  .register-link {
+    font-size: 13px;
+  }
+}

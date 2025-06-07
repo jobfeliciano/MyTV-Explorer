@@ -1,7 +1,7 @@
 /* Favorites.css */
 
 .favorites-page {
-    background-color: #000; /* Fond noir */
+    background-color: #000; 
     color: #fff;
     min-height: 100vh;
     padding: 40px;
@@ -20,9 +20,11 @@
   }
   
   /* Grille des favoris */
-  .favorites-grid {
+.favorites-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
-  }
+}
+
+
