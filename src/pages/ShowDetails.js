@@ -85,7 +85,7 @@ const ShowDetails = (props) => {
       const storedUser = JSON.parse(localStorage.getItem('user'));
       setUser(storedUser);
       axios
-        .get(`http://localhost:3005/users/${storedUser.id}`)
+        .get(`https://mytv-jsonserver-production.up.railway.app/users/${storedUser.id}`)
         .then((res) => {
           const favorites = res.data.favorites || [];
           setHeartState(favorites.includes(details.id) ? 'full' : 'empty');
@@ -108,10 +108,10 @@ const ShowDetails = (props) => {
     if (!user) return;
     if (heartState === 'empty' || heartState === 'broken') {
       try {
-        const userRes = await axios.get(`http://localhost:3005/users/${user.id}`);
+        const userRes = await axios.get(`https://mytv-jsonserver-production.up.railway.app/users/${user.id}`);
         const currentFavorites = userRes.data.favorites || [];
         const updatedFavorites = [...currentFavorites, details.id];
-        await axios.patch(`http://localhost:3005/users/${user.id}`, {
+        await axios.patch(`https://mytv-jsonserver-production.up.railway.app/users/${user.id}`, {
           favorites: updatedFavorites
         });
         setHeartState('full');
@@ -120,10 +120,10 @@ const ShowDetails = (props) => {
       }
     } else if (heartState === 'full') {
       try {
-        const userRes = await axios.get(`http://localhost:3005/users/${user.id}`);
+        const userRes = await axios.get(`https://mytv-jsonserver-production.up.railway.app/users/${user.id}`);
         const currentFavorites = userRes.data.favorites || [];
         const updatedFavorites = currentFavorites.filter((favId) => favId !== details.id);
-        await axios.patch(`http://localhost:3005/users/${user.id}`, {
+        await axios.patch(`https://mytv-jsonserver-production.up.railway.app/users/${user.id}`, {
           favorites: updatedFavorites
         });
         setHeartState('broken');
