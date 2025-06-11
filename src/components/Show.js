@@ -13,7 +13,7 @@ const Show = ({ show }) => {
     if (isAuthenticated) {
       const storedUser = JSON.parse(localStorage.getItem("user"));
       setUser(storedUser);
-      axios.get(`http://localhost:3005/users/${storedUser.id}`)
+      axios.get(`https://mytv-jsonserver-production.up.railway.app/users/${storedUser.id}`)
         .then(res => {
           const favs = res.data.favorites || [];
           setHeartState(favs.includes(show.id) ? "full" : "empty");
@@ -26,7 +26,7 @@ const Show = ({ show }) => {
     e.stopPropagation();
     if (!user) return;
     try {
-      const res = await axios.get(`http://localhost:3005/users/${user.id}`);
+      const res = await axios.get(`https://mytv-jsonserver-production.up.railway.app/users/${user.id}`);
       const favs = res.data.favorites || [];
       let updated;
       if (heartState === "full") {
@@ -36,7 +36,7 @@ const Show = ({ show }) => {
         updated = [...favs, show.id];
         setHeartState("full");
       }
-      await axios.patch(`http://localhost:3005/users/${user.id}`, { favorites: updated });
+      await axios.patch(`https://mytv-jsonserver-production.up.railway.app/users/${user.id}`, { favorites: updated });
       const newUser = { ...user, favorites: updated };
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
